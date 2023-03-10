@@ -1,6 +1,7 @@
 // Copyright © 2017 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: BSD-2-Clause
 //
+
 package rpc
 
 import (
@@ -13,8 +14,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/Rockstar5645/go-nfs-client/nfs/util"
-	"github.com/Rockstar5645/go-nfs-client/nfs/xdr"
+	"github.com/sergeyberezansky/go-nfs-client/nfs/util"
+	"github.com/sergeyberezansky/go-nfs-client/nfs/xdr"
 )
 
 const (
@@ -52,7 +53,11 @@ func DialTCP(network string, ldr *net.TCPAddr, addr string) (*Client, error) {
 		return nil, err
 	}
 
-	conn, err := net.DialTCP(a.Network(), ldr, a)
+	d := net.Dialer{
+		Timeout:   time.Second * 10,
+		LocalAddr: ldr,
+	}
+	conn, err := d.Dial("tcp", a.String())
 	if err != nil {
 		return nil, err
 	}

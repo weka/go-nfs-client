@@ -1,14 +1,13 @@
 // Copyright © 2017 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: BSD-2-Clause
-//
 package nfs
 
 import (
 	"errors"
 	"fmt"
 
-	"github.com/Rockstar5645/go-nfs-client/nfs/rpc"
-	"github.com/Rockstar5645/go-nfs-client/nfs/xdr"
+	"github.com/sergeyberezansky/go-nfs-client/nfs/rpc"
+	"github.com/sergeyberezansky/go-nfs-client/nfs/xdr"
 )
 
 const (

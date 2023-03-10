@@ -1,6 +1,5 @@
 // Copyright © 2017 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: BSD-2-Clause
-//
 package xdr
 
 import (
@@ -8,7 +7,7 @@ import (
 	"encoding/binary"
 	"testing"
 
-	"github.com/Rockstar5645/go-nfs-client/nfs/util"
+	"github.com/sergeyberezansky/go-nfs-client/nfs/util"
 )
 
 func TestRead(t *testing.T) {
