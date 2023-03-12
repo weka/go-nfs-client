@@ -1,5 +1,6 @@
 // Copyright © 2017 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: BSD-2-Clause
+
 package rpc
 
 import (
@@ -70,8 +71,8 @@ func (p *Portmapper) Getport(mapping Mapping) (int, error) {
 	return int(port), nil
 }
 
-func DialPortmapper(net, host string) (*Portmapper, error) {
-	client, err := DialTCP(net, nil, fmt.Sprintf("%s:%d", host, PmapPort))
+func DialPortmapper(net, host string, timeout time.Duration) (*Portmapper, error) {
+	client, err := DialTCP(net, nil, fmt.Sprintf("%s:%d", host, PmapPort), timeout)
 	if err != nil {
 		return nil, err
 	}

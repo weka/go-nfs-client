@@ -1,5 +1,6 @@
 // Copyright © 2017 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: BSD-2-Clause
+
 package nfs
 
 import (
@@ -66,7 +67,7 @@ func (m *Mount) Unmount() error {
 }
 
 // Mount creates a mount to a filesystem, with a priv flag to use local (un)privileged ports
-func (m *Mount) Mount(dirpath string, auth rpc.Auth, priv bool) (*Target, error) {
+func (m *Mount) Mount(dirpath string, auth rpc.Auth, priv bool, timeout time.Duration) (*Target, error) {
 	type mount struct {
 		rpc.Header
 		Dirpath string
@@ -104,7 +105,7 @@ func (m *Mount) Mount(dirpath string, auth rpc.Auth, priv bool) (*Target, error)
 		m.dirPath = dirpath
 		m.auth = auth
 
-		vol, err := NewTarget(m.Addr, auth, fh, dirpath, priv)
+		vol, err := NewTarget(m.Addr, auth, fh, dirpath, priv, timeout)
 		if err != nil {
 			return nil, err
 		}
@@ -127,7 +128,7 @@ func (m *Mount) Mount(dirpath string, auth rpc.Auth, priv bool) (*Target, error)
 	return nil, fmt.Errorf("unknown mount stat: %d", mountstat3)
 }
 
-func DialMount(addr string, priv bool) (*Mount, error) {
+func DialMount(addr string, priv bool, timeout time.Duration) (*Mount, error) {
 	// get MOUNT port
 	m := rpc.Mapping{
 		Prog: MountProg,
@@ -136,7 +137,7 @@ func DialMount(addr string, priv bool) (*Mount, error) {
 		Port: 0,
 	}
 
-	client, err := DialService(addr, m, priv)
+	client, err := DialService(addr, m, priv, timeout)
 	if err != nil {
 		return nil, err
 	}

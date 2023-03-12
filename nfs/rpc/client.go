@@ -46,14 +46,14 @@ type Client struct {
 	*tcpTransport
 }
 
-func DialTCP(network string, ldr *net.TCPAddr, addr string) (*Client, error) {
+func DialTCP(network string, ldr *net.TCPAddr, addr string, timeout time.Duration) (*Client, error) {
 	a, err := net.ResolveTCPAddr(network, addr)
 	if err != nil {
 		return nil, err
 	}
 
 	d := net.Dialer{
-		Timeout:   time.Second * 10,
+		Timeout:   timeout,
 		LocalAddr: ldr,
 	}
 	conn, err := d.Dial("tcp", a.String())

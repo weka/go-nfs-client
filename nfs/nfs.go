@@ -217,8 +217,8 @@ type FSInfo struct {
 	Properties uint32
 }
 
-func DialService(addr string, prog rpc.Mapping, priv bool) (*rpc.Client, error) {
-	pm, err := rpc.DialPortmapper("tcp", addr)
+func DialService(addr string, prog rpc.Mapping, priv bool, timeout time.Duration) (*rpc.Client, error) {
+	pm, err := rpc.DialPortmapper("tcp", addr, timeout)
 	if err != nil {
 		util.Errorf("Failed to connect to portmapper: %s", err)
 		return nil, err
@@ -230,7 +230,7 @@ func DialService(addr string, prog rpc.Mapping, priv bool) (*rpc.Client, error) 
 		return nil, err
 	}
 
-	client, err := dialService(addr, port, priv)
+	client, err := dialService(addr, port, priv, timeout)
 	if err != nil {
 		return nil, err
 	}
@@ -238,7 +238,7 @@ func DialService(addr string, prog rpc.Mapping, priv bool) (*rpc.Client, error) 
 	return client, nil
 }
 
-func dialService(addr string, port int, priv bool) (*rpc.Client, error) {
+func dialService(addr string, port int, priv bool, timeout time.Duration) (*rpc.Client, error) {
 	var (
 		ldr    *net.TCPAddr
 		client *rpc.Client
@@ -265,7 +265,7 @@ func dialService(addr string, port int, priv bool) (*rpc.Client, error) {
 			raddr := fmt.Sprintf("%s:%d", addr, port)
 			util.Debugf("Connecting to %s", raddr)
 
-			client, err = rpc.DialTCP("tcp", ldr, raddr)
+			client, err = rpc.DialTCP("tcp", ldr, raddr, timeout)
 			if err == nil {
 				break
 			}
@@ -282,7 +282,7 @@ func dialService(addr string, port int, priv bool) (*rpc.Client, error) {
 		raddr := fmt.Sprintf("%s:%d", addr, port)
 		util.Debugf("Connecting to %s from unprivileged port", raddr)
 
-		client, err = rpc.DialTCP("tcp", ldr, raddr)
+		client, err = rpc.DialTCP("tcp", ldr, raddr, timeout)
 		if err != nil {
 			return nil, err
 		}
