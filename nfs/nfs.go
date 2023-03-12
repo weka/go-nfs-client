@@ -4,15 +4,14 @@ package nfs
 
 import (
 	"fmt"
+	"go-nfs-client/nfs/rpc"
+	"go-nfs-client/nfs/util"
 	"math/rand"
 	"net"
 	"os"
 	"os/user"
 	"syscall"
 	"time"
-
-	"github.com/sergeyberezansky/go-nfs-client/nfs/rpc"
-	"github.com/sergeyberezansky/go-nfs-client/nfs/util"
 )
 
 const (

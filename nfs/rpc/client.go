@@ -8,14 +8,13 @@ import (
 	"bufio"
 	"bytes"
 	"fmt"
+	"go-nfs-client/nfs/util"
+	"go-nfs-client/nfs/xdr"
 	"io"
 	"math/rand"
 	"net"
 	"sync/atomic"
 	"time"
-
-	"github.com/sergeyberezansky/go-nfs-client/nfs/util"
-	"github.com/sergeyberezansky/go-nfs-client/nfs/xdr"
 )
 
 const (

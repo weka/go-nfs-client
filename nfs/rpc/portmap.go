@@ -4,8 +4,8 @@ package rpc
 
 import (
 	"fmt"
-
-	"github.com/sergeyberezansky/go-nfs-client/nfs/xdr"
+	"go-nfs-client/nfs/xdr"
+	"time"
 )
 
 // PORTMAP

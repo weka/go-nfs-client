@@ -5,9 +5,8 @@ package xdr
 import (
 	"bytes"
 	"encoding/binary"
+	"go-nfs-client/nfs/util"
 	"testing"
-
-	"github.com/sergeyberezansky/go-nfs-client/nfs/util"
 )
 
 func TestRead(t *testing.T) {

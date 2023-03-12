@@ -5,9 +5,9 @@ package nfs
 import (
 	"errors"
 	"fmt"
-
-	"github.com/sergeyberezansky/go-nfs-client/nfs/rpc"
-	"github.com/sergeyberezansky/go-nfs-client/nfs/xdr"
+	"go-nfs-client/nfs/rpc"
+	"go-nfs-client/nfs/xdr"
+	"time"
 )
 
 const (

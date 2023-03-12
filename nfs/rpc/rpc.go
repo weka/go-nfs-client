@@ -4,10 +4,9 @@ package rpc
 
 import (
 	"bytes"
+	"go-nfs-client/nfs/xdr"
 	"math/rand"
 	"time"
-
-	"github.com/sergeyberezansky/go-nfs-client/nfs/xdr"
 )
 
 type Auth struct {

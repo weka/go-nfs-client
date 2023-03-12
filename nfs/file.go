@@ -4,9 +4,9 @@ package nfs
 
 import (
 	"errors"
-	"github.com/sergeyberezansky/go-nfs-client/nfs/rpc"
-	"github.com/sergeyberezansky/go-nfs-client/nfs/util"
-	"github.com/sergeyberezansky/go-nfs-client/nfs/xdr"
+	"go-nfs-client/nfs/rpc"
+	"go-nfs-client/nfs/util"
+	"go-nfs-client/nfs/xdr"
 	"io"
 	"os"
 )

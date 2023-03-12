@@ -7,14 +7,14 @@ import (
 	"crypto/sha256"
 	"fmt"
 	"github.com/google/uuid"
-	"github.com/sergeyberezansky/go-nfs-client/nfs"
+	"go-nfs-client/nfs"
+	"go-nfs-client/nfs/rpc"
+	"go-nfs-client/nfs/util"
 	"io"
 	"log"
 	"os"
 	"strings"
-
-	"github.com/sergeyberezansky/go-nfs-client/nfs/rpc"
-	"github.com/sergeyberezansky/go-nfs-client/nfs/util"
+	"time"
 )
 
 func main() {

@@ -1,12 +1,11 @@
 // Copyright © 2017 VMware, Inc. All Rights Reserved.
 // SPDX-License-Identifier: BSD-2-Clause
-//
+
 package xdr
 
 import (
+	"github.com/rasky/go-xdr/xdr2"
 	"io"
-
-	xdr "github.com/rasky/go-xdr/xdr2"
 )
 
 func Write(w io.Writer, val interface{}) error {
