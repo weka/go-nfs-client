@@ -6,6 +6,7 @@ package nfs
 import (
 	"errors"
 	"fmt"
+	xdr2 "github.com/rasky/go-xdr/xdr2"
 	"go-nfs-client/nfs/rpc"
 	"go-nfs-client/nfs/xdr"
 	"time"
@@ -126,6 +127,71 @@ func (m *Mount) Mount(dirpath string, auth rpc.Auth, priv bool, timeout time.Dur
 		return nil, errors.New("MNT3ERR_NAMETOOLONG")
 	}
 	return nil, fmt.Errorf("unknown mount stat: %d", mountstat3)
+}
+
+type Group struct {
+	Group string
+	//Padding []byte
+}
+type Export struct {
+	Directory string
+	//Padding   []byte
+	Groups []Group
+	//isNext int32
+}
+
+type ExportList struct {
+	Exports []*Export
+	//isNext  int32
+}
+
+type Groups struct {
+	ValueFollows uint32 `xdr:"switch"`
+	GrName       string `xdr:"case=1"`
+	GrNext       *Groups
+}
+
+// Exports describes a linked-list of exports (struct exportnode)
+type Exports struct {
+	ValueFollows uint32 `xdr:"switch"`
+	ExDir        string `xdr:"case=1"`
+	ExGroups     Groups
+	ExNext       *Exports
+}
+
+func (m *Mount) ListExports(auth rpc.Auth) ([]*ExportList, error) {
+	type showExports struct {
+		rpc.Header
+	}
+	entries := []*ExportList{}
+	res, err := m.Call(&showExports{
+		rpc.Header{
+			Rpcvers: 2,
+			Prog:    MountProg,
+			Vers:    MountVers,
+			Proc:    MountProc3Export,
+			Cred:    auth,
+			Verf:    rpc.AuthNull,
+		}},
+	)
+
+	if err != nil {
+		return []*ExportList{}, err
+	}
+	//ret := &ExportResponse{}
+	num := 1
+	ret := &ExportList{Exports: []*Export{}}
+	for num > 0 {
+		num, err = xdr2.Unmarshal(res, ret)
+		if err != nil {
+			return nil, err
+		}
+		entries = append(entries, ret)
+
+	}
+
+	print(num)
+	return entries, nil
 }
 
 func DialMount(addr string, priv bool, timeout time.Duration) (*Mount, error) {

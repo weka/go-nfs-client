@@ -5,6 +5,7 @@ package main
 import (
 	"bytes"
 	"crypto/sha256"
+	"flag"
 	"fmt"
 	"github.com/google/uuid"
 	"go-nfs-client/nfs"
@@ -18,21 +19,23 @@ import (
 )
 
 func main() {
-	util.DefaultLogger.SetDebug(true)
-	if len(os.Args) != 2 {
-		util.Infof("%s <host>:<target path> ", os.Args[0])
-		os.Exit(-1)
-	}
-
-	b := strings.Split(os.Args[1], ":")
+	var (
+		readonly = flag.Bool("readonly", false, "Use readonly test")
+		timeout  = flag.Duration("timeout", 3, "Max connection timeout")
+	)
+	util.DefaultLogger.SetDebug(false)
+	//if len(os.Args) != 2 {
+	//	util.Infof("%s <host>:<target path> ", os.Args[0])
+	//	os.Exit(-1)
+	//}
+	flag.Parse()
+	b := strings.Split(flag.Args()[0], ":")
 
 	host := b[0]
 	target := b[1]
 
-	util.Infof("host=%s target=%s\n", host, target)
-
-	log.Print("Attempting to dial PortMapper")
-	mount, err := nfs.DialMount(host, false)
+	util.Infof("Attempting RPC connection %s", host)
+	mount, err := nfs.DialMount(host, false, *timeout*time.Second)
 	if err != nil {
 		log.Fatalf("unable to dial MOUNT service: %v", err)
 	}
@@ -44,7 +47,14 @@ func main() {
 
 	auth := rpc.NewAuthUnix(host, 0, 0)
 
-	v, err := mount.Mount(target, auth.Auth(), false)
+	log.Printf("Attempting LIST_EXPORTS %s", host)
+	_, err = mount.ListExports(auth.Auth())
+	if err != nil {
+		log.Fatal("Failed to list exports")
+	}
+
+	log.Printf("Attempting MOUNT %s", target)
+	v, err := mount.Mount(target, auth.Auth(), false, *timeout*time.Second)
 	if err != nil {
 		log.Fatalf("unable to mount volume: %v", err)
 	}
@@ -54,15 +64,25 @@ func main() {
 		}
 	}()
 
-	u, _ := uuid.NewUUID()
-	testFileName := u.String()
+	if !*readonly {
+		u, _ := uuid.NewUUID()
+		testFileName := u.String()
 
-	if err := testFileRW(v, testFileName, 1024); err != nil {
-		log.Fatalf("Failed to create file for testing")
+		if err := testFileRW(v, testFileName, 1024); err != nil {
+			log.Fatalf("Failed to create file for testing")
+		}
+
+		if err := v.Remove(testFileName); err != nil {
+			log.Fatalf("Failed to delete file")
+		}
+
 	}
-
-	if err := v.Remove(testFileName); err != nil {
-		log.Fatalf("Failed to delete file")
+	entries, err := ls(v, "/")
+	if err != nil {
+		log.Fatal("Failed to ls")
+	}
+	for _, entry := range entries {
+		print(entry.String())
 	}
 	log.Print("All GOOD")
 }
@@ -129,11 +149,6 @@ func ls(v *nfs.Target, path string) ([]*nfs.EntryPlus, error) {
 	dirs, err := v.ReadDirPlus(path)
 	if err != nil {
 		return nil, fmt.Errorf("readdir error: %s", err.Error())
-	}
-
-	util.Infof("dirs:")
-	for _, dir := range dirs {
-		util.Infof("\t%s\t%d:%d\t0%o", dir.FileName, dir.Attr.Attr.UID, dir.Attr.Attr.GID, dir.Attr.Attr.Mode)
 	}
 
 	return dirs, nil

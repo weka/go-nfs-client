@@ -126,6 +126,22 @@ func (f *Fattr) IsDir() bool {
 	return f.Type == NF3Dir
 }
 
+func (f *Fattr) IsChr() bool {
+	return f.Type == NF3Chr
+}
+
+func (f *Fattr) IsBlock() bool {
+	return f.Type == NF3Blk
+}
+
+func (f *Fattr) IsFifo() bool {
+	return f.Type == NF3FIFO
+}
+
+func (f *Fattr) IsSocket() bool {
+	return f.Type == NF3Sock
+}
+
 func (f *Fattr) Sys() interface{} {
 	return nil
 }
@@ -191,6 +207,10 @@ func (e *EntryPlus) Sys() interface{} {
 	}
 
 	return e.FileId
+}
+
+func (e *EntryPlus) String() string {
+	return fmt.Sprintf("%-20s\t%-10d\n", e.FileName, e.Size())
 }
 
 type WccData struct {
